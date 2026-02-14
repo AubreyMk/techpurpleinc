@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <title>TechPurple Studio – AI-Driven Creative & Dev</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="TechPurple Studio blends AI agents, web & app development, video editing, and content creation into one full-service digital partner."
+    />
+
+    <!-- Global base styles + dark / light theme tokens -->
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #030712;
+        --bg-elevated: rgba(15, 23, 42, 0.92);
+        --fg: #e5e7eb;
+        --accent: #a855f7;
+        --accent-soft: rgba(168, 85, 247, 0.1);
+        --border-subtle: rgba(148, 163, 184, 0.25);
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.75);
+      }
+
+      html[data-theme='light'] {
+        color-scheme: light dark;
+        --bg: #f9fafb;
+        --bg-elevated: rgba(255, 255, 255, 0.94);
+        --fg: #020617;
+        --accent: #7c3aed;
+        --accent-soft: rgba(124, 58, 237, 0.08);
+        --border-subtle: rgba(148, 163, 184, 0.45);
+        --shadow-soft: 0 18px 45px rgba(15, 23, 42, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, #1e293b 0, transparent 55%),
+          radial-gradient(circle at bottom, #020617 0, transparent 60%),
+          var(--bg);
+        color: var(--fg);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'SF Pro Text',
+          'Segoe UI', sans-serif;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: geometricPrecision;
+        transition:
+          background 260ms ease-out,
+          color 200ms ease-out;
+      }
+
+      html[data-theme='light'] body {
+        background:
+          radial-gradient(circle at top, rgba(199, 210, 254, 0.9) 0, transparent 55%),
+          radial-gradient(circle at bottom, rgba(248, 250, 252, 0.9) 0, transparent 60%),
+          var(--bg);
+        color: var(--fg);
+      }
+
+      #root {
+        min-height: 100vh;
+        position: relative;
+        z-index: 0;
+        animation: root-fade-in 380ms ease-out both;
+      }
+
+      /* Subtle floating theme toggle */
+      .theme-toggle {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 40;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+        background: var(--bg-elevated);
+        box-shadow: var(--shadow-soft);
+        color: var(--fg);
+        font-size: 0.78rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        transition:
+          transform 160ms ease-out,
+          box-shadow 160ms ease-out,
+          background 160ms ease-out,
+          border-color 160ms ease-out;
+      }
+
+      .theme-toggle:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 22px 55px rgba(15, 23, 42, 0.6);
+        border-color: var(--accent);
+        background: linear-gradient(
+          135deg,
+          var(--bg-elevated),
+          var(--accent-soft)
+        );
+      }
+
+      .theme-toggle:active {
+        transform: translateY(0);
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.75);
+      }
+
+      .theme-toggle__icon {
+        width: 1rem;
+        height: 1rem;
+        display: grid;
+        place-items: center;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #facc15, #f97316);
+        color: #020617;
+        transition:
+          transform 220ms ease-out,
+          background 220ms ease-out,
+          color 220ms ease-out;
+      }
+
+      html[data-theme='dark'] .theme-toggle__icon {
+        background: radial-gradient(circle at 30% 30%, #0f172a, #020617);
+        color: #e5e7eb;
+        transform: rotate(-12deg);
+      }
+
+      .theme-toggle__label {
+        opacity: 0.8;
+      }
+
+      @keyframes root-fade-in {
+        from {
+          opacity: 0;
+          transform: translateY(4px);
+          filter: blur(2px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+          filter: blur(0);
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-CckDg8f-.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BGFi5mc7.css">
+  </head>
+  <body>
+    <!-- Lightweight theme toggle that sits above the SPA -->
+    <button
+      id="theme-toggle"
+      class="theme-toggle"
+      type="button"
+      aria-label="Toggle color scheme"
+    >
+      <span class="theme-toggle__icon" aria-hidden="true">●</span>
+      <span class="theme-toggle__label">Dark</span>
+    </button>
+
+    <div id="root"></div>
+
+    <!-- Theme behavior: respects preference + persists choice -->
+    <script>
+      (function () {
+        const storageKey = 'tp-theme';
+        const root = document.documentElement;
+        const toggle = document.getElementById('theme-toggle');
+        const label = toggle?.querySelector('.theme-toggle__label');
+
+        function getSystemPrefersDark() {
+          return window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+
+        function applyTheme(theme, save) {
+          const next = theme === 'light' ? 'light' : 'dark';
+          root.setAttribute('data-theme', next);
+          if (label) {
+            label.textContent = next === 'dark' ? 'Dark' : 'Light';
+          }
+          if (save) {
+            try {
+              window.localStorage.setItem(storageKey, next);
+            } catch (_) {
+              /* ignore */
+            }
+          }
+        }
+
+        // Initial load: stored preference -> system preference -> default dark
+        let initial = 'dark';
+        try {
+          const stored = window.localStorage.getItem(storageKey);
+          if (stored === 'light' || stored === 'dark') {
+            initial = stored;
+          } else if (getSystemPrefersDark()) {
+            initial = 'dark';
+          } else {
+            initial = 'light';
+          }
+        } catch (_) {
+          initial = getSystemPrefersDark() ? 'dark' : 'light';
+        }
+        applyTheme(initial, false);
+
+        if (toggle) {
+          toggle.addEventListener('click', function () {
+            const current =
+              root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+            const next = current === 'dark' ? 'light' : 'dark';
+            applyTheme(next, true);
+          });
+        }
+      })();
+    </script>
+
+  </body>
+</html>
